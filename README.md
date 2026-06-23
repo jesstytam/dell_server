@@ -45,10 +45,10 @@ sudo chown -R 1000:1000 /opt/navidrome
 where `1000:1000` stands for `<user-id>:<group-id>`.
 
 To confirm that it is running, navigate to `localhost:4533` (or you custom port) on the local machine:
-[image]
+![server_screenshot](assets/server.png)
 
 To stream from another device on the same network, you can find the server's IP address by running `hostname -I`, and then navigating to `<ip-address>:4533`:
-[image]
+![phone_screenshot](assets/phone.png)
 
 You can also run the following to check the status of your containers:
 ```
