@@ -1,9 +1,9 @@
 # 💾 Media Server
 
-This is project where I set up an Ubuntu media server to learn **Docker** and **Kubernetes**.
-As such, all services are deployed using Docker.
+This is project where I set up an Ubuntu media server to learn **Docker**, **Prometheus**, and **Grafana**.
+As such, all services are deployed using Docker and monitored using Prometheus & Grafana.
 All services are also deployed based on the official documentation, unless specified.
-THe services were also all stored under the `/opt/` folder, where optional software are stored traditionally.
+The services were also all stored under the `/opt/` folder, where optional software are stored traditionally.
 I expect the server to grow as I spend more time setting it up.
 
 ## 🏗️ Specs
@@ -14,10 +14,11 @@ I expect the server to grow as I spend more time setting it up.
 - 1TB storage
 
 ## 🗃️ Containers & services
-1. [Navidrome](#navidrome)
-2. Jellyfin (coming soon...)
+1. [Navidrome](#-navidrome)
+2. [Prometheus & Grafana](#-prometheus--grafana)
 
 ## 🎸 Navidrome
+
 Navidrome is a service that serves music files of many formats, including FLAC, which makes up the bulk of my digital music library.
 I created `docker-compose.yml` based on the official documentation, only changing the path to my volumes and uncommenting `ND_LOGLEVEL` as such:
 ```
@@ -57,3 +58,53 @@ CONTAINER ID   IMAGE                     COMMAND            CREATED         STAT
 b0a5926ca179   deluan/navidrome:latest   "/app/navidrome"   2 minutes ago   Up 2 minutes   0.0.0.0:4533->4533/tcp, [::]:4533->4533/tcp   navidrome-navidrome-1
 ```
 
+## Prometheus & Grafana
+
+Prometheus is a great tool for monitoring server traffic and activity to maintain uptime. In combination with Grafana, they make a great monitoring stack by automatically plotting graphs, where Prometheus serves as the backend and Grafana serves as the frontend interface.
+
+I installed Prometheus using the following YAML script:
+```
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+```
+
+In the same `/etc/prometheus` folder, I created another YAML `prometheus.yml` to connect it to the services' endpoints for metric collection. It looks something like this:
+```
+global:
+  scrape_interval: 60s
+scrape_configs:
+  - job_name: '<service_name>'
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets: ['<service_name>:<service_port>']
+
+```
+As you add more services to your server, you will have to add more jobs to this script to allow monitoring.
+
+I then installed Grafana with the environmental variables `GF_AUTH_ANONYMOUS` to bypass the login screen.
+```
+services:
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    ports:
+      - "3000:3000"
+```
+
+
+
+### Prometheus for Navidrome
+
+Luckily for me, the maintainers of Navidrome has already been configured the service to work with Prometheus.
+
+To enable Prometheus in Navidrome, simply add the following to `docker-compose.yml` of Navidrome and then rebuild.
+```
+ND_PROMETHEUS_ENABLED=true
+```
