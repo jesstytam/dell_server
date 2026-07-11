@@ -15,7 +15,7 @@ I expect the server to grow as I spend more time setting it up.
 
 ## 🗃️ Containers & services
 1. [Navidrome](#-navidrome)
-2. [Prometheus & Grafana](#traffic_lights-prometheus--grafana)
+2. [Prometheus & Grafana](#-prometheus--grafana)
 
 ## 🎸 Navidrome
 
@@ -60,7 +60,7 @@ CONTAINER ID   IMAGE                     COMMAND            CREATED         STAT
 b0a5926ca179   deluan/navidrome:latest   "/app/navidrome"   2 minutes ago   Up 2 minutes   0.0.0.0:4533->4533/tcp, [::]:4533->4533/tcp   navidrome-navidrome-1
 ```
 
-## :traffic_lights: Prometheus & Grafana
+## 🚥 Prometheus & Grafana
 
 Prometheus is a great tool for monitoring server traffic and activity to maintain uptime. In combination with Grafana, they make a great monitoring stack by automatically plotting graphs, where Prometheus serves as the backend and Grafana serves as the frontend interface.
 
